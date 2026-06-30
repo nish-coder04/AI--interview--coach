@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import sqlite3
+import os
 app = Flask(__name__)
 def init_db():
     conn = sqlite3.connect("database.db")
@@ -27,6 +28,9 @@ def save_profile():
     degree = request.form["degree"]
     college = request.form["college"]
     year = request.form["year"]
+    resume = request.files["resume"]
+    resume_path = os.path.join("resumes", resume.filename)
+    resume.save(resume_path)
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
