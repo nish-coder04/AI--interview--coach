@@ -16,27 +16,51 @@
             text-align: center;
             font-family: Arial;
         }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+        }
+
+        .bottom-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+        }
     </style>
 </head>
 
 <body>
     <form action="/save" method="POST" enctype="multipart/form-data">
-    <label>Name:</label>
-    <input type="text" name="name"><br><br>
+        <label>Name:</label>
+        <input type="text" name="name"><br><br>
 
-    <label>Degree:</label>
-    <input type="text" name="degree"><br><br>
+        <label>Degree:</label>
+        <input type="text" name="degree"><br><br>
 
-    <label>College:</label>
-    <input type="text" name="college"><br><br>
+        <label>College:</label>
+        <input type="text" name="college"><br><br>
 
-    <label>Academic Year:</label>
-    <input type="text" name="year"><br><br>
-    <label>Upload Resume:</label>
-    <input type="file" name="resume"><br><br>
-    <button type="submit">Save Profile</button>
+        <label>Academic Year:</label>
+        <input type="text" name="year"><br><br>
+        <label>Upload Resume:</label>
+        <input type="file" name="resume"><br><br>
+        <button type="submit">Save Profile</button>
     </form>
     <h1>Welcome to AI Interview Prep..!!!</h1>
+    <div class="bottom-nav">
+        <a href="/">🎯 Interview</a>
+        <a href="/profile">👤 Profile</a>
+        <a href="/progress">📊 Progress</a>
+        <a href="/history">🕐 History</a>
+        <a href="/feedback">💬 Feedback</a>
+    </div>
 </body>
 
 </html>
