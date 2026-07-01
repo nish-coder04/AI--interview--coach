@@ -1,4 +1,4 @@
-# AI Interview Academy 🎯
+# AI Interview Coach 🎯
 
 An AI-powered mock interview app built with Python and Flask.
 
