@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Company</title>
+    <style>
+    body {
+        background-color: #f0f4f8;
+        font-family: Arial;
+        text-align: center;
+    }
+
+    h1 {
+        color: #185FA5;
+        margin: 20px 0;
+    }
+
+    .company-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .company-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        width: 130px;
+        text-decoration: none;
+        color: #1a1a2e;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .company-card img {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+    }
+
+    .company-card p {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+    <h1>Select a Company</h1>
+
+<div class="company-grid">
+    <a href="/select/google" class="company-card">
+        <img src="https://logo.clearbit.com/google.com" alt="Google">
+        <p>Google</p>
+    </a>
+    <a href="/select/microsoft" class="company-card">
+        <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft">
+        <p>Microsoft</p>
+    </a>
+    <a href="/select/amazon" class="company-card">
+        <img src="https://logo.clearbit.com/amazon.com" alt="Amazon">
+        <p>Amazon</p>
+    </a>
+    <a href="/select/flipkart" class="company-card">
+        <img src="https://logo.clearbit.com/flipkart.com" alt="Flipkart">
+        <p>Flipkart</p>
+    </a>
+    <a href="/select/tcs" class="company-card">
+        <img src="https://logo.clearbit.com/tcs.com" alt="TCS">
+        <p>TCS</p>
+    </a>
+    <a href="/select/infosys" class="company-card">
+        <img src="https://logo.clearbit.com/infosys.com" alt="Infosys">
+        <p>Infosys</p>
+    </a>
+</div>
+    
+</body>
+</html>

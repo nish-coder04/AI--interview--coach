@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import sqlite3
 import os
 app = Flask(__name__)
@@ -11,7 +11,8 @@ def init_db():
             name TEXT,
             degree TEXT,
             college TEXT,
-            year TEXT
+            year TEXT,
+            resume TEXT
         )
     ''')
     conn.commit()
@@ -20,7 +21,10 @@ def init_db():
 init_db()
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html")  
+@app.route("/company")
+def company():
+    return render_template("company.html")
 
 @app.route("/save", methods=["POST"])
 def save_profile():
@@ -34,11 +38,11 @@ def save_profile():
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO profile (name, degree, college, year) VALUES (?, ?, ?, ?)",
-                   (name, degree, college, year))
+    cursor.execute("INSERT INTO profile (name, degree, college, year, resume) VALUES (?, ?, ?, ?, ?)",
+                   (name, degree, college, year, resume_path))
     conn.commit()
     conn.close()
 
-    return "Profile saved!"
+    return redirect("/company")
 if __name__ == "__main__":
     app.run(debug=True)
