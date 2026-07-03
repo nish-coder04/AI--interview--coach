@@ -25,6 +25,15 @@ def home():
 @app.route("/company")
 def company():
     return render_template("company.html")
+@app.route("/select/<company>")
+def select_company(company):
+    return render_template("role.html", company=company)
+@app.route("/start", methods=["POST"])
+def start():
+    company = request.form["company"]
+    role = request.form["role"]
+    difficulty = request.form["difficulty"]
+    return f"Company: {company} | Role: {role} | Difficulty: {difficulty}"
 
 @app.route("/save", methods=["POST"])
 def save_profile():

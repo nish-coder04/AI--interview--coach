@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role</title>
+</head>
+<body>
+    <h1>{{ company | capitalize }} — Select Role & Difficulty</h1>
+
+<form action="/start" method="POST">
+    <input type="hidden" name="company" value="{{ company }}">
+
+    <label>Job Role:</label><br>
+    <select name="role">
+        <option value="sde">SDE (Software Developer)</option>
+        <option value="da">Data Analyst</option>
+        <option value="pm">Product Manager</option>
+        <option value="ml">ML Engineer</option>
+    </select><br><br>
+
+    <label>Difficulty:</label><br>
+    <select name="difficulty">
+        <option value="fresher">Fresher</option>
+        <option value="experienced">Experienced (1-2 yrs)</option>
+    </select><br><br>
+
+    <button type="submit">Next →</button>
+</form>
+</body>
+</html>
