@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
 import os
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 app = Flask(__name__)
 def init_db():
     conn = sqlite3.connect("database.db")
@@ -33,7 +38,20 @@ def start():
     company = request.form["company"]
     role = request.form["role"]
     difficulty = request.form["difficulty"]
-    return f"Company: {company} | Role: {role} | Difficulty: {difficulty}"
+    
+    message = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=500,
+        messages=[
+            {
+                "role": "user",
+                "content": f"You are an interviewer at {company}. Generate 1 interview question for a {difficulty} {role} candidate. Just the question, nothing else."
+            }
+        ]
+    )
+    
+    question = message.content[0].text
+    return f"<h2>First Question:</h2><p>{question}</p>"
 
 @app.route("/save", methods=["POST"])
 def save_profile():
