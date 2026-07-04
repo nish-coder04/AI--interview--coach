@@ -39,20 +39,25 @@ def start():
     role = request.form["role"]
     difficulty = request.form["difficulty"]
     
+    return render_template("round.html", company=company, role=role, difficulty=difficulty)
+@app.route("/begin", methods=["POST"])
+def begin():
+    company = request.form["company"]
+    role = request.form["role"]
+    difficulty = request.form["difficulty"]
+    round_type = request.form["round"]
     message = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=500,
         messages=[
             {
                 "role": "user",
-                "content": f"You are an interviewer at {company}. Generate 1 interview question for a {difficulty} {role} candidate. Just the question, nothing else."
+                "content": f"You are an interviewer at {company} conducting a {round_type} round. Generate 1 interview question for a {difficulty} {role} candidate. Just the question, nothing else."
             }
         ]
     )
-    
     question = message.content[0].text
-    return f"<h2>First Question:</h2><p>{question}</p>"
-
+    return f"<h2>{round_type.capitalize()} Round — First Question:</h2><p>{question}</p>"
 @app.route("/save", methods=["POST"])
 def save_profile():
     name = request.form["name"]

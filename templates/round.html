@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select ROund</title>
+</head>
+<body>
+    <h1>{{ company | capitalize }} — Select Round</h1>
+
+<form action="/begin" method="POST">
+    <input type="hidden" name="company" value="{{ company }}">
+    <input type="hidden" name="role" value="{{ role }}">
+    <input type="hidden" name="difficulty" value="{{ difficulty }}">
+    <input type="hidden" name="round" value="technical">
+    <button type="submit">💻 Technical Round</button>
+</form>
+<form action="/begin" method="POST">
+    <input type="hidden" name="company" value="{{ company }}">
+    <input type="hidden" name="role" value="{{ role }}">
+    <input type="hidden" name="difficulty" value="{{ difficulty }}">
+    <input type="hidden" name="round" value="hr">
+    <button type="submit">💻 HR Round</button>
+</form>
+<form action="/begin" method="POST">
+    <input type="hidden" name="company" value="{{ company }}">
+    <input type="hidden" name="role" value="{{ role }}">
+    <input type="hidden" name="difficulty" value="{{ difficulty }}">
+    <input type="hidden" name="round" value="managerial">
+    <button type="submit">💻 Managerial Round</button>
+</form>
+</body>
+</html>
