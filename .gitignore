@@ -1,3 +1,6 @@
 .env
 database.db
 resumes/
+__pycache__/
+*.pyc
+venv/
