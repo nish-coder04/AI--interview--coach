@@ -46,13 +46,20 @@ def begin():
     role = request.form["role"]
     difficulty = request.form["difficulty"]
     round_type = request.form["round"]
+    if round_type == "technical":
+        tone = "challenging and detail-oriented, focusing on problem-solving skills"
+    elif round_type == "hr":
+        tone = "friendly and conversational, focusing on personality and cultural fit"
+    else:
+        tone = "focused on leadership, decision-making, and past experience"
     message = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=500,
+        system=f"You are a professional interviewer conducting interviews for {company}. Be {tone}.",
         messages=[
             {
                 "role": "user",
-                "content": f"You are an interviewer at {company} conducting a {round_type} round. Generate 1 interview question for a {difficulty} {role} candidate. Just the question, nothing else."
+                "content": f"Generate 1 interview question for a {difficulty} {role} candidate in the {round_type} round. Just the question, nothing else."
             }
         ]
     )
