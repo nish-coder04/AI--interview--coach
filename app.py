@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
 import os
+import json
 from anthropic import Anthropic
 from google import genai
 from google.genai import types
@@ -72,15 +73,14 @@ def begin():
         tone = "focused on leadership, decision-making, and past experience"
     response = gemini_client.models.generate_content(
         model="gemini-3.5-flash",
-        contents=f"Generate 1 interview question for a {difficulty} {role} candidate in the {round_type} round. Just the question, nothing else.",
+        contents=f'Generate exactly 3 interview questions for a {difficulty} {role} candidate in the {round_type} round. Return ONLY a JSON object in this exact format, nothing else: {{"questions": ["question 1", "question 2", "question 3"]}}',
         config=types.GenerateContentConfig(
             system_instruction=f"You are a professional interviewer conducting interviews for {company}. Be {tone}."
         ),
     )
-    question = response.text
-    return (
-        f"<h2>{round_type.capitalize()} Round — First Question:</h2><p>{question}</p>"
-    )
+    data = json.loads(response.text)
+    questions = data["questions"]
+    return f"<h2>{round_type.capitalize()} Round — Questions:</h2><ol><li>{questions[0]}</li><li>{questions[1]}</li><li>{questions[2]}</li></ol>"
 
 
 @app.route("/save", methods=["POST"])
