@@ -2,15 +2,20 @@ from flask import Flask, render_template, request, redirect
 import sqlite3
 import os
 from anthropic import Anthropic
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = Flask(__name__)
+
+
 def init_db():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute('''
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS profile (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
@@ -19,27 +24,40 @@ def init_db():
             year TEXT,
             resume TEXT
         )
-    ''')
+    """)
     conn.commit()
     conn.close()
 
+
 init_db()
+
+
 @app.route("/")
 def home():
-    return render_template("index.html")  
+    return render_template("index.html")
+
+
 @app.route("/company")
 def company():
     return render_template("company.html")
+
+
 @app.route("/select/<company>")
 def select_company(company):
     return render_template("role.html", company=company)
+
+
 @app.route("/start", methods=["POST"])
 def start():
     company = request.form["company"]
     role = request.form["role"]
     difficulty = request.form["difficulty"]
-    
-    return render_template("round.html", company=company, role=role, difficulty=difficulty)
+
+    return render_template(
+        "round.html", company=company, role=role, difficulty=difficulty
+    )
+
+
 @app.route("/begin", methods=["POST"])
 def begin():
     company = request.form["company"]
@@ -52,19 +70,19 @@ def begin():
         tone = "friendly and conversational, focusing on personality and cultural fit"
     else:
         tone = "focused on leadership, decision-making, and past experience"
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=500,
-        system=f"You are a professional interviewer conducting interviews for {company}. Be {tone}.",
-        messages=[
-            {
-                "role": "user",
-                "content": f"Generate 1 interview question for a {difficulty} {role} candidate in the {round_type} round. Just the question, nothing else."
-            }
-        ]
+    response = gemini_client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=f"Generate 1 interview question for a {difficulty} {role} candidate in the {round_type} round. Just the question, nothing else.",
+        config=types.GenerateContentConfig(
+            system_instruction=f"You are a professional interviewer conducting interviews for {company}. Be {tone}."
+        ),
     )
-    question = message.content[0].text
-    return f"<h2>{round_type.capitalize()} Round — First Question:</h2><p>{question}</p>"
+    question = response.text
+    return (
+        f"<h2>{round_type.capitalize()} Round — First Question:</h2><p>{question}</p>"
+    )
+
+
 @app.route("/save", methods=["POST"])
 def save_profile():
     name = request.form["name"]
@@ -77,11 +95,15 @@ def save_profile():
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO profile (name, degree, college, year, resume) VALUES (?, ?, ?, ?, ?)",
-                   (name, degree, college, year, resume_path))
+    cursor.execute(
+        "INSERT INTO profile (name, degree, college, year, resume) VALUES (?, ?, ?, ?, ?)",
+        (name, degree, college, year, resume_path),
+    )
     conn.commit()
     conn.close()
 
     return redirect("/company")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
