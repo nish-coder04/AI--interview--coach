@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Interview</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+        }
+
+        h2 {
+            color: #185FA5;
+        }
+
+        .interview-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .question-panel {
+            width: 50%;
+            padding: 30px;
+            background: #1e1e1e;
+            color: white;
+            border-right: 1px solid #333;
+        }
+
+        .answer-panel {
+            width: 50%;
+            padding: 30px;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        select {
+            padding: 6px;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            background: #2d2d2d;
+            color: #d4d4d4;
+            font-family: monospace;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="interview-container">
+        <div class="question-panel">
+            <h2>Question 1</h2>
+            <p>This is a dummy question for now.</p>
+        </div>
+        <div class="answer-panel">
+            <label>Language: </label>
+            <select>
+                <option value="c">C</option>
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="cpp">C++</option>
+            </select>
+            <br>
+            <textarea rows="15"></textarea>
+            <br><br>
+            <button>Run</button>
+            <button>Submit</button>
+        </div>
+    </div>
+</body>
+
+</html>

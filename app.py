@@ -38,6 +38,11 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/interview")
+def interview():
+    return render_template("interview.html")
+
+
 @app.route("/company")
 def company():
     return render_template("company.html")
