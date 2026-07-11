@@ -52,8 +52,8 @@
 <body>
     <div class="interview-container">
         <div class="question-panel">
-            <h2>Question 1</h2>
-            <p>This is a dummy question for now.</p>
+            <h2>{{ round_type.capitalize() }} Round — Question {{ current_number }} of {{ total }}</h2>
+            <p>{{ question }}</p>
         </div>
         <div class="answer-panel">
             <label>Language: </label>
@@ -68,9 +68,10 @@
             <textarea rows="15"></textarea>
             <br><br>
             <button>Run</button>
-            <button>Submit</button>
+            <a href="/next"><button>Submit</button></a>
         </div>
     </div>
 </body>
+
 
 </html>

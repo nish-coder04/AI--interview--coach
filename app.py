@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import os
 import json
@@ -11,6 +11,7 @@ load_dotenv(override=True)
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = Flask(__name__)
+app.secret_key = "mysecretkey123"
 
 
 def init_db():
@@ -40,7 +41,27 @@ def home():
 
 @app.route("/interview")
 def interview():
-    return render_template("interview.html")
+    questions = session.get("questions")
+    current_index = session.get("current_index")
+    round_type = session.get("round_type")
+    current_question = questions[current_index]
+    total_questions = len(questions)
+    return render_template(
+        "interview.html",
+        question=current_question,
+        current_number=current_index + 1,
+        total=total_questions,
+        round_type=round_type,
+    )
+
+
+@app.route("/next")
+def next_question():
+    session["current_index"] += 1
+    questions = session.get("questions")
+    if session["current_index"] >= len(questions):
+        return "<h2>Interview Complete! 🎉</h2><p>You have answered all questions.</p>"
+    return redirect("/interview")
 
 
 @app.route("/company")
@@ -85,7 +106,10 @@ def begin():
     )
     data = json.loads(response.text)
     questions = data["questions"]
-    return f"<h2>{round_type.capitalize()} Round — Questions:</h2><ol><li>{questions[0]}</li><li>{questions[1]}</li><li>{questions[2]}</li></ol>"
+    session["questions"] = questions
+    session["current_index"] = 0
+    session["round_type"] = round_type
+    return redirect("/interview")
 
 
 @app.route("/save", methods=["POST"])
