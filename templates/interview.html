@@ -53,6 +53,7 @@
     <div class="interview-container">
         <div class="question-panel">
             <h2>{{ round_type.capitalize() }} Round — Question {{ current_number }} of {{ total }}</h2>
+            <p id="timer">Time Remaining: 02:00</p>
             <p>{{ question }}</p>
         </div>
         <div class="answer-panel">
@@ -67,10 +68,29 @@
             <br>
             <textarea rows="15"></textarea>
             <br><br>
+            <a href="/previous"><button>Previous</button></a>
             <button>Run</button>
             <a href="/next"><button>Submit</button></a>
         </div>
     </div>
+    <script>
+        let timeLeft = {{ time_remaining }};
+
+        function updateTimer() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            document.getElementById("timer").innerText = "Time Remaining: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+
+            if (timeLeft <= 0) {
+                document.getElementById("timer").innerText = "Time's Up!";
+                window.location.href = "/timeup";
+            } else {
+                timeLeft = timeLeft - 1;
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+    </script>
 </body>
 
 

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import os
 import json
+import time
 from anthropic import Anthropic
 from google import genai
 from google.genai import types
@@ -46,12 +47,18 @@ def interview():
     round_type = session.get("round_type")
     current_question = questions[current_index]
     total_questions = len(questions)
+    elapsed = time.time() - session.get("start_time")
+    total_duration = 120  # 2 minutes for testing
+    time_remaining = total_duration - elapsed
+    if time_remaining < 0:
+        time_remaining = 0
     return render_template(
         "interview.html",
         question=current_question,
         current_number=current_index + 1,
         total=total_questions,
         round_type=round_type,
+        time_remaining=int(time_remaining),
     )
 
 
@@ -62,6 +69,18 @@ def next_question():
     if session["current_index"] >= len(questions):
         return "<h2>Interview Complete! 🎉</h2><p>You have answered all questions.</p>"
     return redirect("/interview")
+
+
+@app.route("/previous")
+def previous_question():
+    if session["current_index"] > 0:
+        session["current_index"] -= 1
+    return redirect("/interview")
+
+
+@app.route("/timeup")
+def timeup():
+    return "<h2>Time's Up! ⏰</h2><p>Your interview round has ended.</p>"
 
 
 @app.route("/company")
@@ -109,6 +128,7 @@ def begin():
     session["questions"] = questions
     session["current_index"] = 0
     session["round_type"] = round_type
+    session["start_time"] = time.time()
     return redirect("/interview")
 
 
