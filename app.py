@@ -62,8 +62,24 @@ def interview():
     )
 
 
-@app.route("/next")
+@app.route("/next", methods=["GET", "POST"])
 def next_question():
+    if request.method == "POST":
+        answer = request.form.get("answer", "")
+        round_type = session.get("round_type")
+        if round_type in ["hr", "managerial"] and answer.strip() != "":
+            followup_response = gemini_client.models.generate_content(
+                model="gemini-3.5-flash",
+                contents=f"The candidate answered: {answer}\n\nBased on this answer, generate exactly 1 relevant follow-up interview question. Return ONLY the question text, nothing else.",
+                config=types.GenerateContentConfig(
+                    system_instruction=f"You are a professional interviewer conducting a {round_type} round."
+                ),
+            )
+            followup_question = followup_response.text.strip()
+            questions = session.get("questions")
+            questions.append(followup_question)
+            session["questions"] = questions
+
     session["current_index"] += 1
     questions = session.get("questions")
     if session["current_index"] >= len(questions):

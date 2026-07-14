@@ -66,11 +66,13 @@
                 <option value="cpp">C++</option>
             </select>
             <br>
-            <textarea rows="15"></textarea>
-            <br><br>
+            <form action="/next" method="POST">
+                <textarea name="answer" rows="15"></textarea>
+                <br><br>
+                <button type="submit">Submit</button>
+            </form>
             <a href="/previous"><button>Previous</button></a>
             <button>Run</button>
-            <a href="/next"><button>Submit</button></a>
         </div>
     </div>
     <script>
