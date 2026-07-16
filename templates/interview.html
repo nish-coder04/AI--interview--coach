@@ -68,6 +68,10 @@
             <br>
             <form action="/next" method="POST">
                 <textarea name="answer" rows="15"></textarea>
+                {% if round_type != "technical" %}
+                <br>
+                <button type="button" id="micButton">🎤 Start Recording</button>
+                {% endif %}
                 <br><br>
                 <button type="submit">Submit</button>
             </form>
@@ -92,6 +96,31 @@
         }
 
         setInterval(updateTimer, 1000);
+        if (document.getElementById("micButton")) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+
+            let isRecording = false;
+
+            document.getElementById("micButton").addEventListener("click", function () {
+                if (!isRecording) {
+                    recognition.start();
+                    isRecording = true;
+                    this.innerText = "🔴 Stop Recording";
+                } else {
+                    recognition.stop();
+                    isRecording = false;
+                    this.innerText = "🎤 Start Recording";
+                }
+            });
+
+            recognition.onresult = function (event) {
+                let spokenText = event.results[event.results.length - 1][0].transcript;
+                let textarea = document.querySelector("textarea[name='answer']");
+                textarea.value = textarea.value + " " + spokenText;
+            };
+        }
     </script>
 </body>
 
