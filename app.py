@@ -66,6 +66,9 @@ def interview():
 def next_question():
     if request.method == "POST":
         answer = request.form.get("answer", "")
+        answers_list = session.get("answers")
+        answers_list.append(answer)
+        session["answers"] = answers_list
         round_type = session.get("round_type")
         if round_type in ["hr", "managerial"] and answer.strip() != "":
             followup_response = gemini_client.models.generate_content(
@@ -83,7 +86,19 @@ def next_question():
     session["current_index"] += 1
     questions = session.get("questions")
     if session["current_index"] >= len(questions):
-        return "<h2>Interview Complete! 🎉</h2><p>You have answered all questions.</p>"
+        answers = session.get("answers")
+        qa_pairs = ""
+        for i in range(len(questions)):
+            qa_pairs = qa_pairs + f"Q{i+1}: {questions[i]}\nA{i+1}: {answers[i]}\n\n"
+        feedback_response = gemini_client.models.generate_content(
+            model="gemini-3.5-flash",
+            contents=f"Here is a full interview transcript:\n\n{qa_pairs}\n\nGive overall constructive feedback on the candidate's performance across all answers. Mention strengths and areas to improve.",
+            config=types.GenerateContentConfig(
+                system_instruction="You are a supportive but honest interview coach reviewing a candidate's mock interview."
+            ),
+        )
+        feedback_text = feedback_response.text
+        return f"<h2>Interview Complete! 🎉</h2><h3>Overall Feedback:</h3><p>{feedback_text}</p>"
     return redirect("/interview")
 
 
@@ -96,7 +111,10 @@ def previous_question():
 
 @app.route("/timeup")
 def timeup():
-    return "<h2>Time's Up! ⏰</h2><p>Your interview round has ended.</p>"
+    questions = session.get("questions")
+    answers = session.get("answers")
+    feedback_text = generate_overall_feedback(questions, answers)
+    return f"<h2>Time's Up! ⏰</h2><h3>Overall Feedback:</h3><p>{feedback_text}</p>"
 
 
 @app.route("/company")
@@ -118,6 +136,20 @@ def start():
     return render_template(
         "round.html", company=company, role=role, difficulty=difficulty
     )
+
+
+def generate_overall_feedback(questions, answers):
+    qa_pairs = ""
+    for i in range(len(answers)):
+        qa_pairs = qa_pairs + f"Q{i+1}: {questions[i]}\nA{i+1}: {answers[i]}\n\n"
+    feedback_response = gemini_client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=f"Here is a partial or full interview transcript:\n\n{qa_pairs}\n\nGive overall constructive feedback on the candidate's performance across all answers given so far. Mention strengths and areas to improve.",
+        config=types.GenerateContentConfig(
+            system_instruction="You are a supportive but honest interview coach reviewing a candidate's mock interview."
+        ),
+    )
+    return feedback_response.text
 
 
 @app.route("/begin", methods=["POST"])
@@ -142,6 +174,7 @@ def begin():
     data = json.loads(response.text)
     questions = data["questions"]
     session["questions"] = questions
+    session["answers"] = []
     session["current_index"] = 0
     session["round_type"] = round_type
     session["start_time"] = time.time()
