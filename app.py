@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import os
 import json
+import markdown
 import time
 from anthropic import Anthropic
 from google import genai
@@ -72,7 +73,7 @@ def next_question():
         round_type = session.get("round_type")
         if round_type in ["hr", "managerial"] and answer.strip() != "":
             followup_response = gemini_client.models.generate_content(
-                model="gemini-3.5-flash",
+                model="gemini-3.1-flash-lite",
                 contents=f"The candidate answered: {answer}\n\nBased on this answer, generate exactly 1 relevant follow-up interview question. Return ONLY the question text, nothing else.",
                 config=types.GenerateContentConfig(
                     system_instruction=f"You are a professional interviewer conducting a {round_type} round."
@@ -87,18 +88,11 @@ def next_question():
     questions = session.get("questions")
     if session["current_index"] >= len(questions):
         answers = session.get("answers")
-        qa_pairs = ""
-        for i in range(len(questions)):
-            qa_pairs = qa_pairs + f"Q{i+1}: {questions[i]}\nA{i+1}: {answers[i]}\n\n"
-        feedback_response = gemini_client.models.generate_content(
-            model="gemini-3.5-flash",
-            contents=f"Here is a full interview transcript:\n\n{qa_pairs}\n\nGive overall constructive feedback on the candidate's performance across all answers. Mention strengths and areas to improve.",
-            config=types.GenerateContentConfig(
-                system_instruction="You are a supportive but honest interview coach reviewing a candidate's mock interview."
-            ),
+        feedback_text = generate_overall_feedback(questions, answers)
+        feedback_html = markdown.markdown(feedback_text)
+        return render_template(
+            "feedback.html", status="Interview Complete! 🎉", feedback=feedback_html
         )
-        feedback_text = feedback_response.text
-        return f"<h2>Interview Complete! 🎉</h2><h3>Overall Feedback:</h3><p>{feedback_text}</p>"
     return redirect("/interview")
 
 
@@ -114,7 +108,10 @@ def timeup():
     questions = session.get("questions")
     answers = session.get("answers")
     feedback_text = generate_overall_feedback(questions, answers)
-    return f"<h2>Time's Up! ⏰</h2><h3>Overall Feedback:</h3><p>{feedback_text}</p>"
+    feedback_html = markdown.markdown(feedback_text)
+    return render_template(
+        "feedback.html", status="Time's Up! ⏰", feedback=feedback_html
+    )
 
 
 @app.route("/company")
@@ -139,16 +136,19 @@ def start():
 
 
 def generate_overall_feedback(questions, answers):
+    if session.get("feedback_cache"):
+        return session.get("feedback_cache")
     qa_pairs = ""
     for i in range(len(answers)):
         qa_pairs = qa_pairs + f"Q{i+1}: {questions[i]}\nA{i+1}: {answers[i]}\n\n"
     feedback_response = gemini_client.models.generate_content(
-        model="gemini-3.5-flash",
+        model="gemini-3.1-flash-lite",
         contents=f"Here is a partial or full interview transcript:\n\n{qa_pairs}\n\nGive overall constructive feedback on the candidate's performance across all answers given so far. Mention strengths and areas to improve.",
         config=types.GenerateContentConfig(
             system_instruction="You are a supportive but honest interview coach reviewing a candidate's mock interview."
         ),
     )
+    session["feedback_cache"] = feedback_response.text
     return feedback_response.text
 
 
@@ -165,7 +165,7 @@ def begin():
     else:
         tone = "focused on leadership, decision-making, and past experience"
     response = gemini_client.models.generate_content(
-        model="gemini-3.5-flash",
+        model="gemini-3.1-flash-lite",
         contents=f'Generate exactly 3 interview questions for a {difficulty} {role} candidate in the {round_type} round. Return ONLY a JSON object in this exact format, nothing else: {{"questions": ["question 1", "question 2", "question 3"]}}',
         config=types.GenerateContentConfig(
             system_instruction=f"You are a professional interviewer conducting interviews for {company}. Be {tone}."
@@ -178,6 +178,7 @@ def begin():
     session["current_index"] = 0
     session["round_type"] = round_type
     session["start_time"] = time.time()
+    session["feedback_cache"] = None
     return redirect("/interview")
 
 
