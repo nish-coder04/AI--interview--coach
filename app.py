@@ -71,7 +71,13 @@ def next_question():
         answers_list.append(answer)
         session["answers"] = answers_list
         round_type = session.get("round_type")
-        if round_type in ["hr", "managerial"] and answer.strip() != "":
+        questions = session.get("questions")
+        MAX_QUESTIONS = 5
+        if (
+            round_type in ["hr", "managerial"]
+            and answer.strip() != ""
+            and len(questions) < MAX_QUESTIONS
+        ):
             followup_response = gemini_client.models.generate_content(
                 model="gemini-3.1-flash-lite",
                 contents=f"The candidate answered: {answer}\n\nBased on this answer, generate exactly 1 relevant follow-up interview question. Return ONLY the question text, nothing else.",
@@ -80,7 +86,6 @@ def next_question():
                 ),
             )
             followup_question = followup_response.text.strip()
-            questions = session.get("questions")
             questions.append(followup_question)
             session["questions"] = questions
 
@@ -88,10 +93,13 @@ def next_question():
     questions = session.get("questions")
     if session["current_index"] >= len(questions):
         answers = session.get("answers")
-        feedback_text = generate_overall_feedback(questions, answers)
-        feedback_html = markdown.markdown(feedback_text)
+        feedback_data = generate_overall_feedback(questions, answers)
         return render_template(
-            "feedback.html", status="Interview Complete! 🎉", feedback=feedback_html
+            "feedback.html",
+            status="Interview Complete! 🎉",
+            strengths=feedback_data["strengths"],
+            weak_points=feedback_data["weak_points"],
+            summary=feedback_data["summary"],
         )
     return redirect("/interview")
 
@@ -107,10 +115,13 @@ def previous_question():
 def timeup():
     questions = session.get("questions")
     answers = session.get("answers")
-    feedback_text = generate_overall_feedback(questions, answers)
-    feedback_html = markdown.markdown(feedback_text)
+    feedback_data = generate_overall_feedback(questions, answers)
     return render_template(
-        "feedback.html", status="Time's Up! ⏰", feedback=feedback_html
+        "feedback.html",
+        status="Time's Up! ⏰",
+        strengths=feedback_data["strengths"],
+        weak_points=feedback_data["weak_points"],
+        summary=feedback_data["summary"],
     )
 
 
@@ -143,13 +154,15 @@ def generate_overall_feedback(questions, answers):
         qa_pairs = qa_pairs + f"Q{i+1}: {questions[i]}\nA{i+1}: {answers[i]}\n\n"
     feedback_response = gemini_client.models.generate_content(
         model="gemini-3.1-flash-lite",
-        contents=f"Here is a partial or full interview transcript:\n\n{qa_pairs}\n\nGive overall constructive feedback on the candidate's performance across all answers given so far. Mention strengths and areas to improve.",
+        contents=f'Here is a partial or full interview transcript:\n\n{qa_pairs}\n\nAnalyze the candidate\'s performance in detail. Even if the candidate performed well overall, always find at least 2 genuine areas for improvement, no matter how minor. Return ONLY a JSON object in this exact format, nothing else: {{"strengths": ["a detailed 1-2 sentence point with specific examples from their answers", "another detailed point"], "weak_points": ["a detailed 1-2 sentence point with specific, actionable advice", "another detailed point"], "summary": "a 2-3 sentence overall summary"}}',
         config=types.GenerateContentConfig(
             system_instruction="You are a supportive but honest interview coach reviewing a candidate's mock interview."
         ),
     )
-    session["feedback_cache"] = feedback_response.text
-    return feedback_response.text
+    feedback_data = json.loads(feedback_response.text)
+    print("DEBUG weak_points:", feedback_data.get("weak_points"))
+    session["feedback_cache"] = feedback_data
+    return feedback_data
 
 
 @app.route("/begin", methods=["POST"])

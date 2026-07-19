@@ -17,26 +17,74 @@
             color: #185FA5;
         }
 
-        .feedback-box {
+        .summary-box {
             background: white;
             border-radius: 12px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
             line-height: 1.6;
         }
 
-        .feedback-box h3,
-        .feedback-box h4 {
-            color: #185FA5;
+        .strengths-box {
+            background: #e6f7ed;
+            border-left: 5px solid #2ecc71;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .weak-points-box {
+            background: #fdeeea;
+            border-left: 5px solid #e67e22;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        .strengths-box h3 {
+            color: #27ae60;
+        }
+
+        .weak-points-box h3 {
+            color: #d35400;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
         }
     </style>
 </head>
 
 <body>
     <h1>{{ status }}</h1>
-    <div class="feedback-box">
-        {{ feedback | safe }}
+
+    <div class="summary-box">
+        <h3>📋 Overview</h3>
+        <p>{{ summary }}</p>
     </div>
+
+    <div class="strengths-box">
+        <h3>✅ Strengths</h3>
+        <ul>
+            {% for point in strengths %}
+            <li>{{ point }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="weak-points-box">
+        <h3>⚠️ Areas to Improve</h3>
+        <ul>
+            {% for point in weak_points %}
+            <li>{{ point }}</li>
+            {% endfor %}
+        </ul>
+        </div>
 </body>
 
 </html>
