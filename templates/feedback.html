@@ -17,6 +17,27 @@
             color: #185FA5;
         }
 
+        .score-box {
+            background: #185FA5;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .score-label {
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.85;
+        }
+
         .summary-box {
             background: white;
             border-radius: 12px;
@@ -62,6 +83,10 @@
 
 <body>
     <h1>{{ status }}</h1>
+    <div class="score-box">
+        <p class="score-number">{{ score }}%</p>
+        <p class="score-label">Overall Performance Score</p>
+    </div>
 
     <div class="summary-box">
         <h3>📋 Overview</h3>
@@ -84,7 +109,7 @@
             <li>{{ point }}</li>
             {% endfor %}
         </ul>
-        </div>
+    </div>
 </body>
 
 </html>
