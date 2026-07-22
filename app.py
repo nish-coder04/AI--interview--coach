@@ -102,6 +102,10 @@ def next_question():
             weak_points=feedback_data["weak_points"],
             suggestions=feedback_data["suggestions"],
             summary=feedback_data["summary"],
+            candidate_name=session.get("candidate_name"),
+            company=session.get("company"),
+            role=session.get("role"),
+            round_type=session.get("round_type"),
         )
 
     return redirect("/interview")
@@ -127,6 +131,10 @@ def timeup():
         weak_points=feedback_data["weak_points"],
         suggestions=feedback_data["suggestions"],
         summary=feedback_data["summary"],
+        candidate_name=session.get("candidate_name"),
+        company=session.get("company"),
+        role=session.get("role"),
+        round_type=session.get("round_type"),
     )
 
 
@@ -159,7 +167,7 @@ def generate_overall_feedback(questions, answers):
         qa_pairs = qa_pairs + f"Q{i+1}: {questions[i]}\nA{i+1}: {answers[i]}\n\n"
     feedback_response = gemini_client.models.generate_content(
         model="gemini-3.1-flash-lite",
-        contents=f'Here is a partial or full interview transcript:\n\n{qa_pairs}\n\nAnalyze the candidate\'s performance in detail. Even if the candidate performed well overall, always find at least 2 genuine areas for improvement, no matter how minor. Also give a realistic overall performance score out of 100, based on how a real interviewer would score this. Also give 2-3 practical, actionable suggestions the candidate can practice before their next interview, based on their specific weak points. Do not include any external links or URLs. Return ONLY a JSON object in this exact format, nothing else: {{"score": 75, "strengths": ["a detailed 1-2 sentence point with specific examples from their answers", "another detailed point"], "weak_points": ["a detailed 1-2 sentence point with specific, actionable advice", "another detailed point"], "suggestions": ["a specific practice tip or exercise", "another practical suggestion"], "summary": "a 2-3 sentence overall summary"}}',
+        contents=f'Here is a partial or full interview transcript:\n\n{qa_pairs}\n\nAnalyze the candidate\'s performance in detail. Even if the candidate performed well overall, always find at least 2 genuine areas for improvement, no matter how minor. Also give a realistic overall performance score out of 100, based on how a real interviewer would score this — IMPORTANT: heavily penalize the score if many questions were left unanswered or skipped, since incomplete answers are a major red flag in a real interview, regardless of how good the answered questions were. Also give 2-3 practical, actionable suggestions the candidate can practice before their next interview, based on their specific weak points. Do not include any external links or URLs. Return ONLY a JSON object in this exact format, nothing else: {{"score": 75, "strengths": ["a detailed 1-2 sentence point with specific examples from their answers", "another detailed point"], "weak_points": ["a detailed 1-2 sentence point with specific, actionable advice", "another detailed point"], "suggestions": ["a specific practice tip or exercise", "another practical suggestion"], "summary": "a 2-3 sentence overall summary"}}',
         config=types.GenerateContentConfig(
             system_instruction="You are a supportive but honest interview coach reviewing a candidate's mock interview."
         ),
@@ -195,6 +203,8 @@ def begin():
     session["answers"] = []
     session["current_index"] = 0
     session["round_type"] = round_type
+    session["company"] = company
+    session["role"] = role
     session["start_time"] = time.time()
     session["feedback_cache"] = None
     return redirect("/interview")
@@ -218,6 +228,7 @@ def save_profile():
     )
     conn.commit()
     conn.close()
+    session["candidate_name"] = name
 
     return redirect("/company")
 

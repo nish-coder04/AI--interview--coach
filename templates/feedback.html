@@ -95,6 +95,8 @@
 
 <body>
     <h1>{{ status }}</h1>
+    <p style="color: #666; margin-top: -10px;">Report for {{ candidate_name }} — {{ company | capitalize }} ({{ role |
+        upper }}), {{ round_type | capitalize }} Round</p>
     <div class="score-box">
         <p class="score-number">{{ score }}%</p>
         <p class="score-label">Overall Performance Score</p>
@@ -129,6 +131,11 @@
             <li>{{ point }}</li>
             {% endfor %}
         </ul>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/company"><button
+                style="background: #185FA5; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 15px; cursor: pointer;">Try
+                Another Interview</button></a>
     </div>
 </body>
 
