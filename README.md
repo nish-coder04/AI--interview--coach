@@ -22,14 +22,23 @@ An AI-powered mock interview app built with Python and Flask.
 - AI-generated follow-up questions (HR/Managerial rounds)
 - Voice input for HR/Managerial rounds (Web Speech API)
 
+## Features (Week 4 - Complete)
+- AI-generated overall feedback report — structured JSON output from Gemini
+- Overall performance score (0-100%) with realistic scoring, including penalty for incomplete answers
+- Strengths and Weak Points sections with specific, detailed feedback
+- Practical, actionable suggestions for improvement (no external links, AI-generated tips only)
+- Personalized final report — candidate name, company, role, and round context
+- "Try Another Interview" button for quick restart
+- Feedback caching to avoid redundant API calls on refresh
+
 ## Tech Stack
 - Python + Flask (Backend)
 - HTML + CSS + JavaScript (Frontend)
 - SQLite (Database)
-- Google Gemini API (AI question generation)
+- Google Gemini API (AI question generation + feedback)
+- Markdown library (formatting AI responses)
 
 ## Coming Soon
-- Feedback & Suggestions (Week 4)
 - History + PDF Report (Week 5)
 - Deployment (Week 6)
 
