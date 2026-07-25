@@ -4,6 +4,7 @@ import os
 import json
 import markdown
 import time
+from datetime import datetime
 from anthropic import Anthropic
 from google import genai
 from google.genai import types
@@ -27,6 +28,21 @@ def init_db():
             college TEXT,
             year TEXT,
             resume TEXT
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS interview_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            candidate_name TEXT,
+            company TEXT,
+            role TEXT,
+            round_type TEXT,
+            score INTEGER,
+            overview TEXT,
+            strengths TEXT,
+            weak_points TEXT,
+            suggestions TEXT,
+            date TEXT
         )
     """)
     conn.commit()
@@ -173,7 +189,27 @@ def generate_overall_feedback(questions, answers):
         ),
     )
     feedback_data = json.loads(feedback_response.text)
-    print("DEBUG weak_points:", feedback_data.get("weak_points"))
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO interview_history (candidate_name, company, role, round_type, score, overview, strengths, weak_points, suggestions, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (
+            session.get("candidate_name"),
+            session.get("company"),
+            session.get("role"),
+            session.get("round_type"),
+            feedback_data["score"],
+            feedback_data["summary"],
+            json.dumps(feedback_data["strengths"]),
+            json.dumps(feedback_data["weak_points"]),
+            json.dumps(feedback_data["suggestions"]),
+            datetime.now().strftime("%Y-%m-%d %H:%M"),
+        ),
+    )
+    conn.commit()
+    conn.close()
+
     session["feedback_cache"] = feedback_data
     return feedback_data
 
