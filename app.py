@@ -309,5 +309,34 @@ def history_detail(interview_id):
     )
 
 
+@app.route("/progress")
+def progress():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT date, score FROM interview_history ORDER BY id ASC")
+    rows = cursor.fetchall()
+    conn.close()
+
+    scores = [row[1] for row in rows]
+    dates = [row[0] for row in rows]
+    total_interviews = len(scores)
+
+    if total_interviews > 0:
+        average_score = round(sum(scores) / total_interviews)
+        best_score = max(scores)
+    else:
+        average_score = 0
+        best_score = 0
+
+    return render_template(
+        "progress.html",
+        total_interviews=total_interviews,
+        average_score=average_score,
+        best_score=best_score,
+        dates=dates,
+        scores=scores,
+    )
+
+
 if __name__ == "__main__":
     app.run(debug=True)
