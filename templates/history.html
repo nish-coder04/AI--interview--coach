@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview History</title>
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: Arial;
+            text-align: center;
+        }
+
+        h1 {
+            color: #185FA5;
+            margin: 20px 0;
+        }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 18px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #185FA5;
+            color: white;
+        }
+
+        a {
+            color: #185FA5;
+            font-weight: bold;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Interview History</h1>
+
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Round</th>
+            <th>Score</th>
+            <th>Details</th>
+        </tr>
+        {% for interview in interviews %}
+        <tr>
+            <td>{{ interview[1] }}</td>
+            <td>{{ interview[2] | capitalize }}</td>
+            <td>{{ interview[3] | upper }}</td>
+            <td>{{ interview[4] | capitalize }}</td>
+            <td>{{ interview[5] }}%</td>
+            <td><a href="/history/{{ interview[0] }}">View Details</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+
+</html>

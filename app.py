@@ -269,5 +269,45 @@ def save_profile():
     return redirect("/company")
 
 
+@app.route("/history")
+def history():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT id, date, company, role, round_type, score FROM interview_history ORDER BY id DESC"
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    return render_template("history.html", interviews=rows)
+
+
+@app.route("/history/<interview_id>")
+def history_detail(interview_id):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM interview_history WHERE id = ?", (interview_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    strengths = json.loads(row[7])
+    weak_points = json.loads(row[8])
+    suggestions = json.loads(row[9])
+
+    return render_template(
+        "feedback.html",
+        status="Past Interview Report",
+        score=row[5],
+        strengths=strengths,
+        weak_points=weak_points,
+        suggestions=suggestions,
+        summary=row[6],
+        candidate_name=row[1],
+        company=row[2],
+        role=row[3],
+        round_type=row[4],
+    )
+
+
 if __name__ == "__main__":
     app.run(debug=True)
