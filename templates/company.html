@@ -17,6 +17,17 @@
             margin: 20px 0;
         }
 
+        .category-heading {
+            color: #185FA5;
+            text-align: left;
+            max-width: 900px;
+            margin: 30px auto 10px;
+            padding: 0 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #185FA5;
+            padding-bottom: 6px;
+        }
+
         .company-grid {
             display: flex;
             flex-wrap: wrap;
@@ -51,38 +62,238 @@
                 width: 100px;
             }
         }
+
+        #companySearch {
+            width: 90%;
+            max-width: 400px;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #185FA5;
+            border-radius: 25px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        #noResults {
+            display: none;
+            margin: 15px 0;
+        }
+
+        #noResults a {
+            display: inline-block;
+            background: #185FA5;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <h1>Select a Company</h1>
+    <input type="text" id="companySearch" placeholder="Search company or type your own..." onkeyup="filterCompanies()">
 
-    <div class="company-grid">
-        <a href="/select/google" class="company-card">
-            <img src="https://logo.clearbit.com/google.com" alt="Google">
-            <p>Google</p>
-        </a>
-        <a href="/select/microsoft" class="company-card">
-            <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft">
-            <p>Microsoft</p>
-        </a>
-        <a href="/select/amazon" class="company-card">
-            <img src="https://logo.clearbit.com/amazon.com" alt="Amazon">
-            <p>Amazon</p>
-        </a>
-        <a href="/select/flipkart" class="company-card">
-            <img src="https://logo.clearbit.com/flipkart.com" alt="Flipkart">
-            <p>Flipkart</p>
-        </a>
-        <a href="/select/tcs" class="company-card">
-            <img src="https://logo.clearbit.com/tcs.com" alt="TCS">
-            <p>TCS</p>
-        </a>
-        <a href="/select/infosys" class="company-card">
-            <img src="https://logo.clearbit.com/infosys.com" alt="Infosys">
-            <p>Infosys</p>
-        </a>
+    <div class="category-section">
+        <h2 class="category-heading">Product / Tech (MNC)</h2>
+        <div class="company-grid">
+            <a href="/select/google" class="company-card">
+                <img src="https://logo.clearbit.com/google.com" alt="Google">
+                <p>Google</p>
+            </a>
+            <a href="/select/microsoft" class="company-card">
+                <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft">
+                <p>Microsoft</p>
+            </a>
+            <a href="/select/meta" class="company-card">
+                <img src="https://logo.clearbit.com/meta.com" alt="Meta">
+                <p>Meta</p>
+            </a>
+            <a href="/select/apple" class="company-card">
+                <img src="https://logo.clearbit.com/apple.com" alt="Apple">
+                <p>Apple</p>
+            </a>
+            <a href="/select/netflix" class="company-card">
+                <img src="https://logo.clearbit.com/netflix.com" alt="Netflix">
+                <p>Netflix</p>
+            </a>
+            <a href="/select/uber" class="company-card">
+                <img src="https://logo.clearbit.com/uber.com" alt="Uber">
+                <p>Uber</p>
+            </a>
+            <a href="/select/adobe" class="company-card">
+                <img src="https://logo.clearbit.com/adobe.com" alt="Adobe">
+                <p>Adobe</p>
+            </a>
+            <a href="/select/salesforce" class="company-card">
+                <img src="https://logo.clearbit.com/salesforce.com" alt="Salesforce">
+                <p>Salesforce</p>
+            </a>
+            <a href="/select/sap" class="company-card">
+                <img src="https://logo.clearbit.com/sap.com" alt="SAP">
+                <p>SAP</p>
+            </a>
+        </div>
     </div>
+
+    <div class="category-section">
+        <h2 class="category-heading">Indian IT Services</h2>
+        <div class="company-grid">
+            <a href="/select/tcs" class="company-card">
+                <img src="https://logo.clearbit.com/tcs.com" alt="TCS">
+                <p>TCS</p>
+            </a>
+            <a href="/select/infosys" class="company-card">
+                <img src="https://logo.clearbit.com/infosys.com" alt="Infosys">
+                <p>Infosys</p>
+            </a>
+            <a href="/select/wipro" class="company-card">
+                <img src="https://logo.clearbit.com/wipro.com" alt="Wipro">
+                <p>Wipro</p>
+            </a>
+            <a href="/select/accenture" class="company-card">
+                <img src="https://logo.clearbit.com/accenture.com" alt="Accenture">
+                <p>Accenture</p>
+            </a>
+            <a href="/select/cognizant" class="company-card">
+                <img src="https://logo.clearbit.com/cognizant.com" alt="Cognizant">
+                <p>Cognizant</p>
+            </a>
+            <a href="/select/techmahindra" class="company-card">
+                <img src="https://logo.clearbit.com/techmahindra.com" alt="Tech Mahindra">
+                <p>Tech Mahindra</p>
+            </a>
+            <a href="/select/capgemini" class="company-card">
+                <img src="https://logo.clearbit.com/capgemini.com" alt="Capgemini">
+                <p>Capgemini</p>
+            </a>
+            <a href="/select/ltimindtree" class="company-card">
+                <img src="https://logo.clearbit.com/ltimindtree.com" alt="LTIMindtree">
+                <p>LTIMindtree</p>
+            </a>
+            <a href="/select/ibm" class="company-card">
+                <img src="https://logo.clearbit.com/ibm.com" alt="IBM">
+                <p>IBM</p>
+            </a>
+            <a href="/select/oracle" class="company-card">
+                <img src="https://logo.clearbit.com/oracle.com" alt="Oracle">
+                <p>Oracle</p>
+            </a>
+            <a href="/select/hcltech" class="company-card">
+                <img src="https://logo.clearbit.com/hcltech.com" alt="HCLTech">
+                <p>HCLTech</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <h2 class="category-heading">Indian Startups / Unicorns</h2>
+        <div class="company-grid">
+            <a href="/select/flipkart" class="company-card">
+                <img src="https://logo.clearbit.com/flipkart.com" alt="Flipkart">
+                <p>Flipkart</p>
+            </a>
+            <a href="/select/zomato" class="company-card">
+                <img src="https://logo.clearbit.com/zomato.com" alt="Zomato">
+                <p>Zomato</p>
+            </a>
+            <a href="/select/swiggy" class="company-card">
+                <img src="https://logo.clearbit.com/swiggy.com" alt="Swiggy">
+                <p>Swiggy</p>
+            </a>
+            <a href="/select/paytm" class="company-card">
+                <img src="https://logo.clearbit.com/paytm.com" alt="Paytm">
+                <p>Paytm</p>
+            </a>
+            <a href="/select/razorpay" class="company-card">
+                <img src="https://logo.clearbit.com/razorpay.com" alt="Razorpay">
+                <p>Razorpay</p>
+            </a>
+            <a href="/select/zerodha" class="company-card">
+                <img src="https://logo.clearbit.com/zerodha.com" alt="Zerodha">
+                <p>Zerodha</p>
+            </a>
+            <a href="/select/cred" class="company-card">
+                <img src="https://logo.clearbit.com/cred.club" alt="CRED">
+                <p>CRED</p>
+            </a>
+            <a href="/select/meesho" class="company-card">
+                <img src="https://logo.clearbit.com/meesho.com" alt="Meesho">
+                <p>Meesho</p>
+            </a>
+            <a href="/select/phonepe" class="company-card">
+                <img src="https://logo.clearbit.com/phonepe.com" alt="PhonePe">
+                <p>PhonePe</p>
+            </a>
+            <a href="/select/freshworks" class="company-card">
+                <img src="https://logo.clearbit.com/freshworks.com" alt="Freshworks">
+                <p>Freshworks</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <h2 class="category-heading">Finance / Consulting</h2>
+        <div class="company-grid">
+            <a href="/select/deloitte" class="company-card">
+                <img src="https://logo.clearbit.com/deloitte.com" alt="Deloitte">
+                <p>Deloitte</p>
+            </a>
+            <a href="/select/jpmorgan" class="company-card">
+                <img src="https://logo.clearbit.com/jpmorgan.com" alt="JP Morgan">
+                <p>JP Morgan</p>
+            </a>
+            <a href="/select/goldmansachs" class="company-card">
+                <img src="https://logo.clearbit.com/goldmansachs.com" alt="Goldman Sachs">
+                <p>Goldman Sachs</p>
+            </a>
+        </div>
+    </div>
+
+    <div id="noResults">
+        <p>No matching company found.</p>
+        <a href="#" id="continueLink">Continue with this company</a>
+    </div>
+
+    <script>
+        function filterCompanies() {
+            const searchValue = document.getElementById("companySearch").value.toLowerCase().trim();
+            const cards = document.querySelectorAll(".company-card");
+            let matchFound = false;
+
+            cards.forEach(function (card) {
+                const companyName = card.querySelector("p").textContent.toLowerCase();
+                if (companyName.includes(searchValue)) {
+                    card.style.display = "block";
+                    matchFound = true;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            // Har category section check karo - agar usmein koi bhi visible card nahi hai,
+            // toh poora section (heading samet) hide kar do
+            const sections = document.querySelectorAll(".category-section");
+            sections.forEach(function (section) {
+                const visibleCard = Array.from(section.querySelectorAll(".company-card")).some(
+                    function (card) {
+                        return card.style.display !== "none";
+                    }
+                );
+                section.style.display = visibleCard ? "block" : "none";
+            });
+
+            const noResultsDiv = document.getElementById("noResults");
+            if (!matchFound && searchValue !== "") {
+                noResultsDiv.style.display = "block";
+                document.getElementById("continueLink").href = "/select/" + searchValue;
+                document.getElementById("continueLink").textContent = "Continue with '" + searchValue + "'";
+            } else {
+                noResultsDiv.style.display = "none";
+            }
+        }
+    </script>
 
 </body>
 
