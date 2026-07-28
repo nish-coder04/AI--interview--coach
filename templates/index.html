@@ -8,13 +8,82 @@
 
     <style>
         body {
-            h1 {
-                color: #185FA5;
-            }
-
-            background-color: #f0f4f8;
+            background-color: #f3f4f7;
             text-align: center;
             font-family: Arial;
+            color: #333333;
+            margin: 0;
+            padding: 40px 20px 100px;
+        }
+
+        h1 {
+            color: #3d5a80;
+            font-size: 30px;
+            margin-bottom: 35px;
+        }
+
+        .profile-card {
+            max-width: 420px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #dde0e6;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: #333333;
+            font-size: 16px;
+            margin-bottom: 6px;
+            margin-top: 18px;
+        }
+
+        label:first-child {
+            margin-top: 0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            box-sizing: border-box;
+            background-color: #f3f4f7;
+            border: 1px solid #cdd3dd;
+            color: #333333;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3d5a80;
+        }
+
+        input[type="file"] {
+            color: #333333;
+            font-size: 15px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background-color: #3d5a80;
+            color: #ffffff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #4a6b96;
         }
 
         .bottom-nav {
@@ -22,31 +91,25 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #1a1a2e;
+            background: #1c2a3a;
+            border-top: 1px solid #16212e;
             display: flex;
             justify-content: space-around;
-            padding: 12px 0;
-        }
-
-        .bottom-nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
+            align-items: center;
+            padding: 18px 0;
+            min-height: 60px;
             box-sizing: border-box;
         }
 
+        .bottom-nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
         @media (max-width: 600px) {
-            form {
+            .profile-card {
                 max-width: 90%;
             }
         }
@@ -54,23 +117,29 @@
 </head>
 
 <body>
-    <form action="/save" method="POST" enctype="multipart/form-data">
-        <label>Name:</label>
-        <input type="text" name="name"><br><br>
-
-        <label>Degree:</label>
-        <input type="text" name="degree"><br><br>
-
-        <label>College:</label>
-        <input type="text" name="college"><br><br>
-
-        <label>Academic Year:</label>
-        <input type="text" name="year"><br><br>
-        <label>Upload Resume:</label>
-        <input type="file" name="resume"><br><br>
-        <button type="submit">Save Profile</button>
-    </form>
     <h1>Welcome to AI Interview Prep..!!!</h1>
+
+    <div class="profile-card">
+        <form action="/save" method="POST" enctype="multipart/form-data">
+            <label>Name:</label>
+            <input type="text" name="name">
+
+            <label>Degree:</label>
+            <input type="text" name="degree">
+
+            <label>College:</label>
+            <input type="text" name="college">
+
+            <label>Academic Year:</label>
+            <input type="text" name="year">
+
+            <label>Upload Resume:</label>
+            <input type="file" name="resume">
+
+            <button type="submit">Save Profile</button>
+        </form>
+    </div>
+
     <div class="bottom-nav">
         <a href="/">🎯 Interview</a>
         <a href="/profile">👤 Profile</a>

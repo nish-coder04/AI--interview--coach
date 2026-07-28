@@ -8,13 +8,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <style>
         body {
-            background-color: #f0f4f8;
+            background-color: #f3f4f7;
             font-family: Arial;
             text-align: center;
         }
 
         h1 {
-            color: #185FA5;
+            color: #3d5a80;
             margin: 20px 0;
         }
 
@@ -27,13 +27,14 @@
 
         .stat-card {
             background: white;
+            border: 1px solid #dde0e6;
             border-radius: 12px;
             padding: 20px 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .stat-card h2 {
-            color: #185FA5;
+            color: #3d5a80;
             font-size: 28px;
             margin: 0;
         }
@@ -47,9 +48,10 @@
             max-width: 700px;
             margin: 0 auto;
             background: white;
+            border: 1px solid #dde0e6;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
     </style>
 </head>
@@ -82,13 +84,13 @@
             type: 'line',
             data: {
                 labels: {{ dates | tojson }},
-                datasets: [{
-                    label: 'Score %',
-                    data: {{ scores | tojson }},
-                    borderColor: '#185FA5',
-                    backgroundColor: 'rgba(24, 95, 165, 0.1)',
-                    fill: true,
-                    tension: 0.3
+            datasets: [{
+                label: 'Score %',
+                data: {{ scores | tojson }},
+            borderColor: '#3d5a80',
+            backgroundColor: 'rgba(61, 90, 128, 0.1)',
+            fill: true,
+            tension: 0.3
                 }]
             }
         });

@@ -1,31 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Role</title>
+    <style>
+        body {
+            background-color: #f3f4f7;
+            font-family: Arial;
+            text-align: center;
+            color: #333333;
+            margin: 0;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            color: #3d5a80;
+            font-size: 26px;
+            margin-bottom: 35px;
+        }
+
+        .role-card {
+            max-width: 420px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #dde0e6;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: #333333;
+            font-size: 16px;
+            margin-bottom: 6px;
+            margin-top: 18px;
+        }
+
+        label:first-child {
+            margin-top: 0;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            box-sizing: border-box;
+            background-color: #f3f4f7;
+            border: 1px solid #cdd3dd;
+            color: #333333;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3d5a80;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background-color: #3d5a80;
+            color: #ffffff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #4a6b96;
+        }
+
+        @media (max-width: 600px) {
+            .role-card {
+                max-width: 90%;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <h1>{{ company | capitalize }} — Select Role & Difficulty</h1>
 
-<form action="/start" method="POST">
-    <input type="hidden" name="company" value="{{ company }}">
+    <div class="role-card">
+        <form action="/start" method="POST">
+            <input type="hidden" name="company" value="{{ company }}">
 
-    <label>Job Role:</label><br>
-    <select name="role">
-        <option value="sde">SDE (Software Developer)</option>
-        <option value="da">Data Analyst</option>
-        <option value="pm">Product Manager</option>
-        <option value="ml">ML Engineer</option>
-    </select><br><br>
+            <label>Job Role:</label>
+            <select name="role">
+                <option value="sde">SDE (Software Developer)</option>
+                <option value="da">Data Analyst</option>
+                <option value="pm">Product Manager</option>
+                <option value="ml">ML Engineer</option>
+            </select>
 
-    <label>Difficulty:</label><br>
-    <select name="difficulty">
-        <option value="fresher">Fresher</option>
-        <option value="experienced">Experienced (1-2 yrs)</option>
-    </select><br><br>
+            <label>Difficulty:</label>
+            <select name="difficulty">
+                <option value="fresher">Fresher</option>
+                <option value="experienced">Experienced (1-2 yrs)</option>
+            </select>
 
-    <button type="submit">Next →</button>
-</form>
+            <button type="submit">Next →</button>
+        </form>
+    </div>
 </body>
+
 </html>
