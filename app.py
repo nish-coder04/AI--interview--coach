@@ -45,6 +45,14 @@ def init_db():
             date TEXT
         )
     """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS app_feedback (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        rating INTEGER,
+        comments TEXT,
+        date TEXT
+    )
+""")
     conn.commit()
     conn.close()
 
@@ -244,6 +252,39 @@ def begin():
     session["start_time"] = time.time()
     session["feedback_cache"] = None
     return redirect("/interview")
+
+
+@app.route("/profile")
+def profile():
+    return redirect("/")
+
+
+@app.route("/feedback")
+def feedback():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT rating, comments, date FROM app_feedback ORDER BY id DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    return render_template("feedback_list.html", feedbacks=rows)
+
+
+@app.route("/feedback/give", methods=["GET", "POST"])
+def give_feedback():
+    if request.method == "POST":
+        rating = request.form["rating"]
+        comments = request.form.get("comments", "")
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO app_feedback (rating, comments, date) VALUES (?, ?, ?)",
+            (rating, comments, datetime.now().strftime("%Y-%m-%d %H:%M")),
+        )
+        conn.commit()
+        conn.close()
+        return render_template("app_feedback.html", submitted=True)
+
+    return render_template("app_feedback.html", submitted=False)
 
 
 @app.route("/save", methods=["POST"])

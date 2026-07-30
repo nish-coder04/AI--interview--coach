@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Feedback</title>
+    <style>
+        body {
+            background-color: #f3f4f7;
+            font-family: Arial;
+            text-align: center;
+            margin: 0;
+            padding: 40px 20px 100px;
+        }
+
+        h1 {
+            color: #3d5a80;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .give-feedback-link {
+            display: inline-block;
+            background: #3d5a80;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .feedback-card {
+            max-width: 600px;
+            margin: 0 auto 16px;
+            background: white;
+            border: 1px solid #dde0e6;
+            border-radius: 12px;
+            padding: 18px 22px;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .stars {
+            color: #f0b429;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .comment {
+            color: #333;
+            margin: 0 0 8px;
+        }
+
+        .date {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            color: #777;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>What Users Are Saying</h1>
+    <p class="subtitle">Feedback shared by people using AI Interview Coach</p>
+    <a href="/feedback/give" class="give-feedback-link">✍️ Share Your Feedback</a>
+
+    {% if feedbacks %}
+    {% for fb in feedbacks %}
+    <div class="feedback-card">
+        <div class="stars">{{ "⭐" * fb[0] }}</div>
+        {% if fb[1] %}
+        <p class="comment">{{ fb[1] }}</p>
+        {% endif %}
+        <p class="date">{{ fb[2] }}</p>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="empty-state">No feedback yet — be the first to share yours!</p>
+    {% endif %}
+</body>
+
+</html>
