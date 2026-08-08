@@ -74,7 +74,10 @@ def interview():
     current_question = questions[current_index]
     total_questions = len(questions)
     elapsed = time.time() - session.get("start_time")
-    total_duration = 120  # 2 minutes for testing
+    if round_type == "technical":
+        total_duration = 3600  # 60 minutes
+    else:
+        total_duration = 1200  # 20 minutes
     time_remaining = total_duration - elapsed
     if time_remaining < 0:
         time_remaining = 0
@@ -94,7 +97,6 @@ def next_question():
         answer = request.form.get("answer", "")
         answers_list = session.get("answers")
         answers_list.append(answer)
-        session["answers"] = answers_list
         round_type = session.get("round_type")
         questions = session.get("questions")
         MAX_QUESTIONS = 5
@@ -235,9 +237,10 @@ def begin():
         tone = "friendly and conversational, focusing on personality and cultural fit"
     else:
         tone = "focused on leadership, decision-making, and past experience"
+    num_questions = 2 if round_type == "technical" else 3
     response = gemini_client.models.generate_content(
         model="gemini-3.1-flash-lite",
-        contents=f'Generate exactly 3 interview questions for a {difficulty} {role} candidate in the {round_type} round. Return ONLY a JSON object in this exact format, nothing else: {{"questions": ["question 1", "question 2", "question 3"]}}',
+        contents=f'Generate exactly {num_questions} interview questions for a {difficulty} {role} candidate in the {round_type} round. Return ONLY a JSON object in this exact format, nothing else: {{"questions": ["question 1", ...]}}',
         config=types.GenerateContentConfig(
             system_instruction=f"You are a professional interviewer conducting interviews for {company}. Be {tone}."
         ),
