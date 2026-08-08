@@ -45,19 +45,16 @@ An AI-powered mock interview platform that helps students and job-seekers practi
 ## 📸 Screenshots
 
 ### Profile Setup
-![Profile](screenshots/profile.png)
+![Profile](screenshots/index.png)
 
 ### Company Selection
-![Company Selection](screenshots/company.png)
+![Company Selection](screenshots/Company.png)
+
+### Role & Difficulty Selection
+![Role and Difficulty](screenshots/difficulty.png)
 
 ### Live Interview
-![Interview](screenshots/interview.png)
-
-### AI Feedback Report
-![Feedback Report](screenshots/feedback.png)
-
-### Progress Tracking
-![Progress](screenshots/progress.png)
+![Interview](screenshots/interface.png)
 
 ---
 
