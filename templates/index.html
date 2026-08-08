@@ -64,6 +64,23 @@
             border-color: #3d5a80;
         }
 
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            box-sizing: border-box;
+            background-color: #f3f4f7;
+            border: 1px solid #cdd3dd;
+            color: #333333;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: Arial;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3d5a80;
+        }
+
         input[type="file"] {
             color: #333333;
             font-size: 15px;
@@ -136,13 +153,26 @@
             <input type="text" name="name">
 
             <label>Degree:</label>
-            <input type="text" name="degree">
+            <select name="degree">
+                <option value="btech">B.Tech</option>
+                <option value="be">B.E.</option>
+                <option value="bca">BCA</option>
+                <option value="bsc">B.Sc</option>
+                <option value="mtech">M.Tech</option>
+                <option value="mca">MCA</option>
+                <option value="other">Other</option>
+            </select>
 
             <label>College:</label>
             <input type="text" name="college">
 
             <label>Academic Year:</label>
-            <input type="text" name="year">
+            <select name="year">
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+            </select>
 
             <label>Upload Resume:</label>
             <input type="file" name="resume">

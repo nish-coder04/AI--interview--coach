@@ -18,6 +18,7 @@ app.secret_key = "mysecretkey123"
 
 
 def init_db():
+    os.makedirs("resumes", exist_ok=True)
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("""
