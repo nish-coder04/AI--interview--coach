@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            background-color: #f3f4f7;
+            text-align: center;
+            font-family: Arial;
+            color: #333333;
+            margin: 0;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            color: #3d5a80;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        .auth-card {
+            max-width: 380px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #dde0e6;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: #333333;
+            font-size: 15px;
+            margin-bottom: 6px;
+            margin-top: 16px;
+        }
+
+        label:first-child {
+            margin-top: 0;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            box-sizing: border-box;
+            background-color: #f3f4f7;
+            border: 1px solid #cdd3dd;
+            color: #333333;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3d5a80;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background-color: #3d5a80;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 22px;
+        }
+
+        .error-msg {
+            color: #b91c1c;
+            background: #fdeeea;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .switch-link a {
+            color: #3d5a80;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Create Your Account</h1>
+
+    <div class="auth-card">
+        {% if error %}
+        <div class="error-msg">{{ error }}</div>
+        {% endif %}
+        <form action="/signup" method="POST">
+            <label>Email:</label>
+            <input type="email" name="email" required>
+
+            <label>Password:</label>
+            <input type="password" name="password" required>
+
+            <button type="submit">Sign Up</button>
+        </form>
+        <p class="switch-link">Already have an account? <a href="/login">Login</a></p>
+    </div>
+</body>
+
+</html>

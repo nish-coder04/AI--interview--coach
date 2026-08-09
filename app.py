@@ -9,6 +9,8 @@ from anthropic import Anthropic
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
 load_dotenv(override=True)
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
@@ -54,6 +56,13 @@ def init_db():
         date TEXT
     )
 """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL
+    )
+""")
     conn.commit()
     conn.close()
 
@@ -61,12 +70,23 @@ def init_db():
 init_db()
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect("/login")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route("/")
+@login_required
 def home():
     return render_template("index.html")
 
 
 @app.route("/interview")
+@login_required
 def interview():
     questions = session.get("questions")
     current_index = session.get("current_index")
@@ -92,6 +112,7 @@ def interview():
 
 
 @app.route("/next", methods=["GET", "POST"])
+@login_required
 def next_question():
     if request.method == "POST":
         answer = request.form.get("answer", "")
@@ -139,6 +160,7 @@ def next_question():
 
 
 @app.route("/previous")
+@login_required
 def previous_question():
     if session["current_index"] > 0:
         session["current_index"] -= 1
@@ -146,6 +168,7 @@ def previous_question():
 
 
 @app.route("/timeup")
+@login_required
 def timeup():
     questions = session.get("questions")
     answers = session.get("answers")
@@ -166,16 +189,19 @@ def timeup():
 
 
 @app.route("/company")
+@login_required
 def company():
     return render_template("company.html")
 
 
 @app.route("/select/<company>")
+@login_required
 def select_company(company):
     return render_template("role.html", company=company)
 
 
 @app.route("/start", methods=["POST"])
+@login_required
 def start():
     company = request.form["company"]
     role = request.form["role"]
@@ -226,6 +252,7 @@ def generate_overall_feedback(questions, answers):
 
 
 @app.route("/begin", methods=["POST"])
+@login_required
 def begin():
     company = request.form["company"]
     role = request.form["role"]
@@ -259,11 +286,66 @@ def begin():
 
 
 @app.route("/profile")
+@login_required
 def profile():
     return redirect("/")
 
 
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        password_hash = generate_password_hash(password)
+
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO users (email, password_hash) VALUES (?, ?)",
+                (email, password_hash),
+            )
+            conn.commit()
+        except sqlite3.IntegrityError:
+            conn.close()
+            return render_template("signup.html", error="Email already registered!")
+        conn.close()
+
+        return redirect("/login")
+
+    return render_template("signup.html", error=None)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, password_hash FROM users WHERE email = ?", (email,))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user and check_password_hash(user[1], password):
+            session["user_id"] = user[0]
+            session["user_email"] = email
+            return redirect("/")
+        else:
+            return render_template("login.html", error="Invalid email or password!")
+
+    return render_template("login.html", error=None)
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
+
+
 @app.route("/feedback")
+@login_required
 def feedback():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -274,6 +356,7 @@ def feedback():
 
 
 @app.route("/feedback/give", methods=["GET", "POST"])
+@login_required
 def give_feedback():
     if request.method == "POST":
         rating = request.form["rating"]
@@ -292,6 +375,7 @@ def give_feedback():
 
 
 @app.route("/save", methods=["POST"])
+@login_required
 def save_profile():
     name = request.form["name"]
     degree = request.form["degree"]
@@ -315,6 +399,7 @@ def save_profile():
 
 
 @app.route("/history")
+@login_required
 def history():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -328,6 +413,7 @@ def history():
 
 
 @app.route("/history/<interview_id>")
+@login_required
 def history_detail(interview_id):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -355,6 +441,7 @@ def history_detail(interview_id):
 
 
 @app.route("/progress")
+@login_required
 def progress():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
