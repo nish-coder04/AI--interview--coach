@@ -481,6 +481,24 @@ def progress():
         dates=dates,
         scores=scores,
     )
+    ADMIN_EMAIL = "tumhara.email@example.com"  # apna real email daalo yahan
+
+
+@app.route("/admin")
+@login_required
+def admin():
+    if session.get("user_email") != ADMIN_EMAIL:
+        return "Access Denied — Admins only.", 403
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT id, name, degree, college, year, resume FROM profile ORDER BY id DESC"
+    )
+    profiles = cursor.fetchall()
+    conn.close()
+
+    return render_template("admin.html", profiles=profiles)
 
 
 if __name__ == "__main__":

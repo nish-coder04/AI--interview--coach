@@ -105,7 +105,7 @@
                 <button type="button" id="micButton">🎤 Start Recording</button>
                 {% endif %}
                 <br><br>
-                <button type="submit">Submit</button>
+                <button type="submit" onclick="this.disabled=true; this.form.submit();">Submit</button>
             </form>
             <a href="/previous"><button>Previous</button></a>
             <button>Run</button>
