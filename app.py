@@ -24,30 +24,32 @@ def init_db():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS profile (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            degree TEXT,
-            college TEXT,
-            year TEXT,
-            resume TEXT
-        )
-    """)
+    CREATE TABLE IF NOT EXISTS profile (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        name TEXT,
+        degree TEXT,
+        college TEXT,
+        year TEXT,
+        resume TEXT
+    )
+""")
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS interview_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            candidate_name TEXT,
-            company TEXT,
-            role TEXT,
-            round_type TEXT,
-            score INTEGER,
-            overview TEXT,
-            strengths TEXT,
-            weak_points TEXT,
-            suggestions TEXT,
-            date TEXT
-        )
-    """)
+    CREATE TABLE IF NOT EXISTS interview_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        candidate_name TEXT,
+        company TEXT,
+        role TEXT,
+        round_type TEXT,
+        score INTEGER,
+        overview TEXT,
+        strengths TEXT,
+        weak_points TEXT,
+        suggestions TEXT,
+        date TEXT
+    )
+""")
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS app_feedback (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -76,6 +78,7 @@ def login_required(f):
         if "user_id" not in session:
             return redirect("/login")
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -230,8 +233,9 @@ def generate_overall_feedback(questions, answers):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO interview_history (candidate_name, company, role, round_type, score, overview, strengths, weak_points, suggestions, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO interview_history (user_id, candidate_name, company, role, round_type, score, overview, strengths, weak_points, suggestions, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (
+            session.get("user_id"),
             session.get("candidate_name"),
             session.get("company"),
             session.get("role"),
@@ -388,8 +392,8 @@ def save_profile():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO profile (name, degree, college, year, resume) VALUES (?, ?, ?, ?, ?)",
-        (name, degree, college, year, resume_path),
+        "INSERT INTO profile (user_id, name, degree, college, year, resume) VALUES (?, ?, ?, ?, ?, ?)",
+        (session.get("user_id"), name, degree, college, year, resume_path),
     )
     conn.commit()
     conn.close()
@@ -404,7 +408,8 @@ def history():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT id, date, company, role, round_type, score FROM interview_history ORDER BY id DESC"
+        "SELECT id, date, company, role, round_type, score FROM interview_history WHERE user_id = ? ORDER BY id DESC",
+        (session.get("user_id"),),
     )
     rows = cursor.fetchall()
     conn.close()
@@ -417,8 +422,13 @@ def history():
 def history_detail(interview_id):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM interview_history WHERE id = ?", (interview_id,))
+    cursor.execute(
+        "SELECT * FROM interview_history WHERE id = ? AND user_id = ?",
+        (interview_id, session.get("user_id")),
+    )
     row = cursor.fetchone()
+    if row is None:
+        return "Interview not found or access denied.", 404
     conn.close()
 
     strengths = json.loads(row[7])
@@ -445,7 +455,10 @@ def history_detail(interview_id):
 def progress():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT date, score FROM interview_history ORDER BY id ASC")
+    cursor.execute(
+        "SELECT date, score FROM interview_history WHERE user_id = ? ORDER BY id ASC",
+        (session.get("user_id"),),
+    )
     rows = cursor.fetchall()
     conn.close()
 
