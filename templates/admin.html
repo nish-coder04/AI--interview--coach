@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            background-color: #f3f4f7;
+            font-family: Arial;
+            text-align: center;
+            margin: 0;
+            padding: 40px 20px 100px;
+        }
+
+        h1 {
+            color: #3d5a80;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #dde0e6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        th, td {
+            padding: 12px 18px;
+            border-bottom: 1px solid #dde0e6;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3d5a80;
+            color: white;
+        }
+
+        a {
+            color: #3d5a80;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .empty-state {
+            color: #777;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔐 Admin Dashboard</h1>
+    <p class="subtitle">All registered user profiles</p>
+
+    {% if profiles %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Degree</th>
+            <th>College</th>
+            <th>Year</th>
+            <th>Resume</th>
+        </tr>
+        {% for p in profiles %}
+        <tr>
+            <td>{{ p[0] }}</td>
+            <td>{{ p[1] }}</td>
+            <td>{{ p[2] }}</td>
+            <td>{{ p[3] }}</td>
+            <td>{{ p[4] }}</td>
+            <td><a href="/{{ p[5] }}" target="_blank">View</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="empty-state">No profiles yet.</p>
+    {% endif %}
+</body>
+
+</html>

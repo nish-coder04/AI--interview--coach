@@ -17,6 +17,7 @@ client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = Flask(__name__)
 app.secret_key = "mysecretkey123"
+ADMIN_EMAIL = "nishthas615@gmail.com" 
 
 
 def init_db():
@@ -481,7 +482,7 @@ def progress():
         dates=dates,
         scores=scores,
     )
-    ADMIN_EMAIL = "tumhara.email@example.com"  # apna real email daalo yahan
+    
 
 
 @app.route("/admin")
