@@ -1,4 +1,11 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    session,
+    send_from_directory,
+)
 import sqlite3
 import os
 import json
@@ -17,7 +24,7 @@ client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = Flask(__name__)
 app.secret_key = "mysecretkey123"
-ADMIN_EMAIL = "nishthas615@gmail.com" 
+ADMIN_EMAIL = "nishthas615@gmail.com"
 
 
 def init_db():
@@ -482,7 +489,6 @@ def progress():
         dates=dates,
         scores=scores,
     )
-    
 
 
 @app.route("/admin")
@@ -500,6 +506,12 @@ def admin():
     conn.close()
 
     return render_template("admin.html", profiles=profiles)
+
+
+@app.route("/resumes/<filename>")
+@login_required
+def serve_resume(filename):
+    return send_from_directory("resumes", filename)
 
 
 if __name__ == "__main__":
