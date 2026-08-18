@@ -350,6 +350,36 @@ def login():
     return render_template("login.html", error=None)
 
 
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form["email"]
+        new_password = request.form["new_password"]
+
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+        user = cursor.fetchone()
+
+        if user:
+            new_hash = generate_password_hash(new_password)
+            cursor.execute(
+                "UPDATE users SET password_hash = ? WHERE email = ?", (new_hash, email)
+            )
+            conn.commit()
+            conn.close()
+            return render_template("forgot_password.html", success=True, error=None)
+        else:
+            conn.close()
+            return render_template(
+                "forgot_password.html",
+                success=False,
+                error="No account found with that email.",
+            )
+
+    return render_template("forgot_password.html", success=False, error=None)
+
+
 @app.route("/logout")
 def logout():
     session.clear()
