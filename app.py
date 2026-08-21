@@ -26,10 +26,14 @@ app = Flask(__name__)
 app.secret_key = "mysecretkey123"
 ADMIN_EMAIL = "nishthas615@gmail.com"
 
+DATA_DIR = "/app/data"
+DB_PATH = os.path.join(DATA_DIR, "database.db")
+RESUME_DIR = os.path.join(DATA_DIR, "resumes")
+
 
 def init_db():
-    os.makedirs("resumes", exist_ok=True)
-    conn = sqlite3.connect("database.db")
+    os.makedirs(RESUME_DIR, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS profile (
@@ -238,7 +242,7 @@ def generate_overall_feedback(questions, answers):
     )
     feedback_data = json.loads(feedback_response.text)
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO interview_history (user_id, candidate_name, company, role, round_type, score, overview, strengths, weak_points, suggestions, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -310,7 +314,7 @@ def signup():
         password = request.form["password"]
         password_hash = generate_password_hash(password)
 
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         try:
             cursor.execute(
@@ -334,7 +338,7 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("SELECT id, password_hash FROM users WHERE email = ?", (email,))
         user = cursor.fetchone()
@@ -356,7 +360,7 @@ def forgot_password():
         email = request.form["email"]
         new_password = request.form["new_password"]
 
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
         user = cursor.fetchone()
@@ -389,7 +393,7 @@ def logout():
 @app.route("/feedback")
 @login_required
 def feedback():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT rating, comments, date FROM app_feedback ORDER BY id DESC")
     rows = cursor.fetchall()
@@ -403,7 +407,7 @@ def give_feedback():
     if request.method == "POST":
         rating = request.form["rating"]
         comments = request.form.get("comments", "")
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO app_feedback (rating, comments, date) VALUES (?, ?, ?)",
@@ -424,10 +428,10 @@ def save_profile():
     college = request.form["college"]
     year = request.form["year"]
     resume = request.files["resume"]
-    resume_path = os.path.join("resumes", resume.filename)
+    resume_path = os.path.join(RESUME_DIR, resume.filename)
     resume.save(resume_path)
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO profile (user_id, name, degree, college, year, resume) VALUES (?, ?, ?, ?, ?, ?)",
@@ -443,7 +447,7 @@ def save_profile():
 @app.route("/history")
 @login_required
 def history():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
         "SELECT id, date, company, role, round_type, score FROM interview_history WHERE user_id = ? ORDER BY id DESC",
@@ -458,7 +462,7 @@ def history():
 @app.route("/history/<interview_id>")
 @login_required
 def history_detail(interview_id):
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
         "SELECT * FROM interview_history WHERE id = ? AND user_id = ?",
@@ -491,7 +495,7 @@ def history_detail(interview_id):
 @app.route("/progress")
 @login_required
 def progress():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
         "SELECT date, score FROM interview_history WHERE user_id = ? ORDER BY id ASC",
@@ -527,7 +531,7 @@ def admin():
     if session.get("user_email") != ADMIN_EMAIL:
         return "Access Denied — Admins only.", 403
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
         "SELECT id, name, degree, college, year, resume FROM profile ORDER BY id DESC"
@@ -541,7 +545,7 @@ def admin():
 @app.route("/resumes/<filename>")
 @login_required
 def serve_resume(filename):
-    return send_from_directory("resumes", filename)
+    return send_from_directory(RESUME_DIR, filename)
 
 
 if __name__ == "__main__":
