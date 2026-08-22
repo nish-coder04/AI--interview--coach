@@ -41,32 +41,54 @@
             font-weight: bold;
             text-decoration: none;
         }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 10px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 0;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 10px 12px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <h1>Interview History</h1>
 
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>Company</th>
-            <th>Role</th>
-            <th>Round</th>
-            <th>Score</th>
-            <th>Details</th>
-        </tr>
-        {% for interview in interviews %}
-        <tr>
-            <td>{{ interview[1] }}</td>
-            <td>{{ interview[2] | capitalize }}</td>
-            <td>{{ interview[3] | upper }}</td>
-            <td>{{ interview[4] | capitalize }}</td>
-            <td>{{ interview[5] }}%</td>
-            <td><a href="/history/{{ interview[0] }}">View Details</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Round</th>
+                <th>Score</th>
+                <th>Details</th>
+            </tr>
+            {% for interview in interviews %}
+            <tr>
+                <td>{{ interview[1] }}</td>
+                <td>{{ interview[2] | capitalize }}</td>
+                <td>{{ interview[3] | upper }}</td>
+                <td>{{ interview[4] | capitalize }}</td>
+                <td>{{ interview[5] }}%</td>
+                <td><a href="/history/{{ interview[0] }}">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
 </body>
 

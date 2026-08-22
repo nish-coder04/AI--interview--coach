@@ -32,7 +32,8 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px 18px;
             border-bottom: 1px solid #dde0e6;
             text-align: left;
@@ -53,6 +54,26 @@
             color: #777;
             margin-top: 40px;
         }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 10px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 25px 10px 100px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 10px 10px;
+            }
+        }
     </style>
 </head>
 
@@ -61,26 +82,28 @@
     <p class="subtitle">All registered user profiles</p>
 
     {% if profiles %}
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Degree</th>
-            <th>College</th>
-            <th>Year</th>
-            <th>Resume</th>
-        </tr>
-        {% for p in profiles %}
-        <tr>
-            <td>{{ p[0] }}</td>
-            <td>{{ p[1] }}</td>
-            <td>{{ p[2] }}</td>
-            <td>{{ p[3] }}</td>
-            <td>{{ p[4] }}</td>
-            <td><a href="/{{ p[5] }}" target="_blank">View</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Degree</th>
+                <th>College</th>
+                <th>Year</th>
+                <th>Resume</th>
+            </tr>
+            {% for p in profiles %}
+            <tr>
+                <td>{{ p[0] }}</td>
+                <td>{{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+                <td>{{ p[3] }}</td>
+                <td>{{ p[4] }}</td>
+                <td><a href="/{{ p[5] }}" target="_blank">View</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     {% else %}
     <p class="empty-state">No profiles yet.</p>
     {% endif %}
