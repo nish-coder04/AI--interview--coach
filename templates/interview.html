@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <title>Interview</title>
     <style>
+        @media (max-width: 768px) {
+            #mobileNotice {
+                display: block;
+            }
+        }
+
         body {
             font-family: Arial;
             margin: 0;
@@ -82,6 +88,10 @@
 </head>
 
 <body>
+    <div id="mobileNotice"
+        style="display:none; background:#3d5a80; color:#fff; text-align:center; padding:12px; font-size:14px;">
+        💻 For the best experience, please use a desktop or laptop for the interview round.
+    </div>
     <div class="interview-container">
         <div class="question-panel">
             <h2>{{ round_type.capitalize() }} Round — Question {{ current_number }} of {{ total }}</h2>

@@ -97,6 +97,26 @@
             color: #3d5a80;
             font-weight: bold;
         }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 30px 15px;
+            }
+
+            .auth-card {
+                max-width: 100%;
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            input[type="email"],
+            input[type="password"] {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 
@@ -107,14 +127,14 @@
         {% if error %}
         <div class="error-msg">
             {% if error is string %}
-                {{ error }}
+            {{ error }}
             {% else %}
-                Password must have:
-                <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+            Password must have:
+            <ul style="margin: 5px 0 0 0; padding-left: 20px;">
                 {% for e in error %}
-                    <li>{{ e }}</li>
+                <li>{{ e }}</li>
                 {% endfor %}
-                </ul>
+            </ul>
             {% endif %}
         </div>
         {% endif %}
