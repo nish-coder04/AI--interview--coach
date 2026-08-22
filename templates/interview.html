@@ -89,6 +89,7 @@
             <p>{{ question }}</p>
         </div>
         <div class="answer-panel">
+            {% if round_type == "technical" %}
             <label>Language: </label>
             <select>
                 <option value="c">C</option>
@@ -98,14 +99,16 @@
                 <option value="cpp">C++</option>
             </select>
             <br>
+            {% endif %}
             <form action="/next" method="POST">
                 <textarea name="answer" rows="15"></textarea>
                 {% if round_type != "technical" %}
                 <br>
                 <button type="button" id="micButton">🎤 Start Recording</button>
                 {% endif %}
-                <br><br>
-                <button type="submit" onclick="this.disabled=true; this.form.submit();">Submit</button>
+                <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                    <button type="submit" onclick="this.disabled=true; this.form.submit();">Submit</button>
+                </div>
             </form>
             <a href="/previous"><button>Previous</button></a>
             <button>Run</button>
