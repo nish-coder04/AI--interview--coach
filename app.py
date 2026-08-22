@@ -11,6 +11,7 @@ import os
 import json
 import markdown
 import time
+import re
 from datetime import datetime
 from anthropic import Anthropic
 from google import genai
@@ -92,6 +93,24 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def is_password_strong(password):
+    errors = []
+    if len(password) < 8:
+        errors.append("At least 8 characters")
+    if not re.search(r"[A-Z]", password):
+        errors.append("At least one uppercase letter")
+    if not re.search(r"[a-z]", password):
+        errors.append("At least one lowercase letter")
+    if not re.search(r"[0-9]", password):
+        errors.append("At least one number")
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        errors.append("At least one special character")
+
+    if errors:
+        return False, errors
+    return True, []
 
 
 @app.route("/")
@@ -312,6 +331,11 @@ def signup():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
+
+        is_valid, message = is_password_strong(password)
+        if not is_valid:
+            return render_template("signup.html", error=message)
+
         password_hash = generate_password_hash(password)
 
         conn = sqlite3.connect(DB_PATH)
@@ -360,6 +384,10 @@ def forgot_password():
         email = request.form["email"]
         new_password = request.form["new_password"]
 
+        is_valid, message = is_password_strong(new_password)
+        if not is_valid:
+            return render_template("forgot_password.html", success=False, error=message)
+
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
@@ -388,6 +416,52 @@ def forgot_password():
 def logout():
     session.clear()
     return redirect("/login")
+
+
+@app.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    if request.method == "POST":
+        current_password = request.form["current_password"]
+        new_password = request.form["new_password"]
+        confirm_password = request.form["confirm_password"]
+
+        if new_password != confirm_password:
+            return render_template(
+                "change_password.html",
+                success=False,
+                error="New password and confirm password do not match.",
+            )
+
+        is_valid, message = is_password_strong(new_password)
+        if not is_valid:
+            return render_template("change_password.html", success=False, error=message)
+
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT password_hash FROM users WHERE id = ?", (session.get("user_id"),)
+        )
+        user = cursor.fetchone()
+
+        if user and check_password_hash(user[0], current_password):
+            new_hash = generate_password_hash(new_password)
+            cursor.execute(
+                "UPDATE users SET password_hash = ? WHERE id = ?",
+                (new_hash, session.get("user_id")),
+            )
+            conn.commit()
+            conn.close()
+            return render_template("change_password.html", success=True, error=None)
+        else:
+            conn.close()
+            return render_template(
+                "change_password.html",
+                success=False,
+                error="Current password is incorrect.",
+            )
+
+    return render_template("change_password.html", success=False, error=None)
 
 
 @app.route("/feedback")
